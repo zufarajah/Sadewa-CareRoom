@@ -13,16 +13,16 @@ export default function RoomFilterTabs({ value, onChange }: Props) {
   ];
 
   return (
-    <div className="flex gap-2 flex-wrap">
+    <div className="inline-flex gap-1 rounded-full bg-slate-100 p-1">
       {tabs.map((tab) => (
         <button
           key={tab.value}
           type="button"
           onClick={() => onChange(tab.value)}
-          className={`px-4 py-2 rounded-lg font-medium text-sm transition-all ${
+          className={`rounded-full px-3 py-1 text-[11px] font-medium transition ${
             value === tab.value
               ? "bg-[#008F4A] text-white"
-              : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+              : "text-slate-700 hover:bg-slate-200"
           }`}
         >
           {tab.label}

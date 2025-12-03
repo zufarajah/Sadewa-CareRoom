@@ -1,48 +1,31 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Header = () => {
-  const navBase =
-    "rounded-full px-3 py-1 text-xs font-medium transition-colors";
-
-  const navClass = ({ isActive }: { isActive: boolean }) =>
-    `${navBase} ${
-      isActive
-        ? "bg-white text-[#008F4A]"
-        : "bg-white/10 text-white hover:bg-white/20"
-    }`;
-
   return (
-    <header className="bg-[#008F4A] shadow-md">
-      <div className="mx-auto flex w-full max-w-md items-center justify-between px-4 py-3">
-        <Link to="/" className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-white shadow">
-            <img
-              src="/logo_rskia_sadewa-removebg.png"
-              alt="RSKIA Sadewa"
-              className="h-7 w-7 object-contain"
-            />
+    <header className="bg-white shadow-sm sticky top-0 z-50">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+        {/* Logo + text */}
+        <Link to="/" className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 flex-shrink-0">
+            <span className="text-lg text-emerald-600">🏥</span>
           </div>
           <div className="leading-tight">
-            <div className="text-sm font-bold text-white">
-              RSKIA SADEWA
+            <div className="text-sm font-semibold text-emerald-700">
+              RSKIA Sadewa
             </div>
-            <div className="text-[10px] text-emerald-100">
-              Pusat Bayi Tabung &amp; Layanan Ibu Anak
+            <div className="text-xs text-slate-500">
+              Ketersediaan Kamar
             </div>
           </div>
         </Link>
 
-        <nav className="flex items-center gap-2">
-          <NavLink to="/" className={navClass}>
-            Beranda
-          </NavLink>
-          <NavLink to="/kamar" className={navClass}>
-            Kamar
-          </NavLink>
-          <NavLink to="/admin" className={navClass}>
-            Admin
-          </NavLink>
-        </nav>
+        {/* Tombol admin */}
+        <Link
+          to="/admin"
+          className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 flex-shrink-0"
+        >
+          Admin
+        </Link>
       </div>
     </header>
   );

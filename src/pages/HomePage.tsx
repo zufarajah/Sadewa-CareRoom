@@ -2,46 +2,70 @@ import { Link } from "react-router-dom";
 
 export default function HomePage() {
   return (
-    <main className="flex min-h-[calc(100vh-56px)] justify-center bg-gradient-to-b from-emerald-200 via-emerald-100 to-white px-4 py-6">
-      <div className="flex w-full max-w-sm flex-col items-center">
-        {/* Logo + Judul App */}
-        <div className="mt-4 flex flex-col items-center gap-3">
-          <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-white/80 shadow-md">
-            <img
-              src="/logo_rskia_sadewa-removebg.png"
-              alt="RSKIA SADEWA"
-              className="h-20 w-20 object-contain"
-            />
-          </div>
-          <h1 className="text-xl font-semibold text-slate-900">
-            Sadewa Beds
-          </h1>
-          <p className="max-w-xs text-center text-[13px] text-slate-600">
-            Cek ketersediaan kamar rawat inap Ibu &amp; Anak di RSKIA Sadewa
-            dengan tampilan sederhana seperti aplikasi mobile.
-          </p>
+    <main className="min-h-screen bg-gradient-to-b from-emerald-100 to-emerald-50">
+      <div className="flex flex-col items-center justify-center px-4 py-20">
+        {/* ICON */}
+        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-600 text-3xl">
+          🏥
         </div>
 
-        {/* Kartu putih besar seperti form login */}
-        <div className="mt-6 w-full rounded-[32px] bg-white p-5 shadow-xl">
-          <p className="text-[13px] text-slate-700">
-            Silakan masuk ke halaman informasi kamar untuk melihat status
-            ketersediaan kamar berdasarkan kelas dan kategori pasien.
-          </p>
+        {/* TITLE */}
+        <h1 className="text-center text-3xl md:text-4xl font-bold text-emerald-700">
+          Ketersediaan Kamar Rawat Inap
+        </h1>
 
-          <div className="mt-5">
-            <Link
-              to="/kamar"
-              className="flex h-11 items-center justify-center rounded-full bg-[#008F4A] text-sm font-semibold text-white shadow-md hover:bg-[#00713a]"
-            >
-              Lihat Ketersediaan Kamar
-            </Link>
+        {/* DESCRIPTION */}
+        <p className="mt-3 text-center text-sm md:text-base text-slate-700 max-w-md">
+          Cek ketersediaan kamar rawat inap Ibu dan Anak di RSKIA Sadewa secara real-time.
+        </p>
+
+        {/* CTA BUTTON */}
+        <Link
+          to="/kamar"
+          className="mt-8 rounded-lg bg-emerald-600 px-10 py-3 text-base font-bold text-white shadow-md hover:bg-emerald-700 transition-all"
+        >
+          Lihat Ketersediaan Kamar
+        </Link>
+
+        {/* INFO CARD */}
+        <div className="mt-12 w-full max-w-xl rounded-2xl bg-white p-8 shadow-lg">
+          <h2 className="text-center text-xl md:text-2xl font-bold text-emerald-700">
+            Informasi Rumah Sakit
+          </h2>
+
+          <div className="mt-6 space-y-4">
+            {/* ALAMAT */}
+            <div className="flex gap-3">
+              <div className="text-2xl text-emerald-600 flex-shrink-0">📍</div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-slate-900">Alamat</h3>
+                <p className="mt-0.5 text-sm text-slate-700">
+                  Jl. Babarsari TB 16 No 13B, Sleman
+                </p>
+              </div>
+            </div>
+
+            {/* TELEPON */}
+            <div className="flex gap-3">
+              <div className="text-2xl text-emerald-600 flex-shrink-0">📞</div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-slate-900">Telepon</h3>
+                <p className="mt-0.5 text-sm text-slate-700">
+                  0274 489118 / 485610
+                </p>
+              </div>
+            </div>
           </div>
 
-          <p className="mt-4 text-center text-[11px] text-slate-500">
-            Aplikasi ini adalah prototipe dan tidak terhubung langsung dengan
-            sistem resmi RSKIA Sadewa.
-          </p>
+          {/* WHATSAPP BUTTON */}
+          <a
+            href="https://wa.me/6285964422140"
+            target="_blank"
+            rel="noreferrer"
+            className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-yellow-400 px-4 py-3 text-sm md:text-base font-bold text-emerald-800 hover:bg-yellow-500 transition-all"
+          >
+            💬 Hubungi via WhatsApp
+          </a>
         </div>
       </div>
     </main>

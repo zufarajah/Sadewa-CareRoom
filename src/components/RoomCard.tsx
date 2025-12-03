@@ -4,27 +4,40 @@ import RoomStatusBadge from "./RoomStatusBadge";
 interface Props {
   room: Room;
 }
+
 const RoomCard = ({ room }: Props) => {
+  const categoryLabel = room.category === "ibu" ? "Ibu" : "Anak";
+
   return (
-    <div className="bg-white border border-slate-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
-      <div className="flex items-start justify-between gap-4 mb-4">
-        <div>
-          <h3 className="text-lg font-bold text-slate-900">{room.name}</h3>
-          <p className="text-sm text-slate-600 mt-1">
-            {room.kelas} • {room.category === "ibu" ? "Kamar Ibu" : "Kamar Anak"}
-          </p>
+    <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow">
+      <div className="flex items-start justify-between gap-3">
+        {/* LEFT SIDE */}
+        <div className="flex items-start gap-3 flex-1">
+          <div className="text-2xl text-emerald-600">👤</div>
+          <div className="flex-1">
+            <h3 className="text-base font-bold text-slate-900">
+              {room.name}
+            </h3>
+          </div>
         </div>
-        <RoomStatusBadge status={room.status} />
+
+        {/* RIGHT SIDE - Status */}
+        <div className="flex-shrink-0">
+          <RoomStatusBadge status={room.status} />
+        </div>
       </div>
-      
-      {room.facilities && (
-        <div className="pt-4 border-t border-slate-200">
-          <p className="text-xs font-bold text-slate-700 mb-2">FASILITAS</p>
-          <p className="text-sm text-slate-600">
-            {room.facilities}
-          </p>
+
+      {/* INFO */}
+      <div className="mt-3 space-y-1 text-sm text-slate-700">
+        <div className="flex justify-between">
+          <span className="text-slate-600">Kelas:</span>
+          <span className="font-medium text-slate-900">{room.kelas}</span>
         </div>
-      )}
+        <div className="flex justify-between">
+          <span className="text-slate-600">Kategori:</span>
+          <span className="font-medium text-slate-900">{categoryLabel}</span>
+        </div>
+      </div>
     </div>
   );
 };

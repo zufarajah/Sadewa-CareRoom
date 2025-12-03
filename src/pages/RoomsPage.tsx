@@ -1,90 +1,219 @@
 import { useMemo, useState } from "react";
-import type { Room, RoomCategory, RoomStatus } from "../data/rooms";
+import type { Room } from "../data/rooms";
 import RoomCard from "../components/RoomCard";
-import RoomFilterTabs from "../components/RoomFilterTabs";
-import type { RoomFilterValue } from "../components/RoomFilterTabs";
+
+// Biar aman, kita definisikan tipe lokal saja
+type StatusFilter = "all" | "tersedia" | "terisi" | "dibersihkan";
+type CategoryFilter = "all" | "ibu" | "anak";
 
 type Props = {
   rooms: Room[];
 };
 
 export default function RoomsPage({ rooms }: Props) {
-  const [filter, setFilter] = useState<RoomFilterValue>("all");
-  const [statusFilter, setStatusFilter] = useState<RoomStatus | "all">("all");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>("all");
 
+  // Hitung summary
+  const summary = useMemo(() => {
+    const counts = {
+      tersedia: 0,
+      terisi: 0,
+      dibersihkan: 0,
+    };
+
+    rooms.forEach((r: any) => {
+      if (r.status === "tersedia") counts.tersedia++;
+      else if (r.status === "terisi") counts.terisi++;
+      else if (r.status === "dibersihkan") counts.dibersihkan++;
+    });
+
+    return counts;
+  }, [rooms]);
+
+  // Filter kamar
   const filteredRooms = useMemo(
     () =>
-      rooms.filter((room) => {
-        if (filter !== "all" && room.category !== (filter as RoomCategory))
-          return false;
+      rooms.filter((room: any) => {
         if (statusFilter !== "all" && room.status !== statusFilter) return false;
+        if (
+          categoryFilter !== "all" &&
+          room.category !== categoryFilter
+        )
+          return false;
         return true;
       }),
-    [rooms, filter, statusFilter]
+    [rooms, statusFilter, categoryFilter]
   );
 
+  // Kelompok per kategori & kelas
+  const groupedByCategory = useMemo(() => {
+    const result: {
+      ibu: Record<string, Room[]>;
+      anak: Record<string, Room[]>;
+    } = { ibu: {}, anak: {} };
+
+    filteredRooms.forEach((room: any) => {
+      const cat: "ibu" | "anak" = room.category;
+      if (!result[cat][room.kelas]) {
+        result[cat][room.kelas] = [];
+      }
+      result[cat][room.kelas].push(room);
+    });
+
+    return result;
+  }, [filteredRooms]);
+
   return (
-    <main className="min-h-[calc(100vh-56px)] bg-gradient-to-b from-emerald-200 via-emerald-100 to-white px-4 py-4">
-      <div className="mx-auto flex w-full max-w-md flex-col">
-        <div className="mb-4 mt-2 text-center">
-          <h1 className="text-xl font-semibold text-slate-900">
-            Informasi Kamar
-          </h1>
-          <p className="mt-1 text-[12px] text-slate-600">
-            Pilih kategori kamar dan lihat status ketersediaan secara cepat.
-          </p>
+    <main className="min-h-screen bg-slate-50">
+      <div className="mx-auto max-w-6xl px-4 py-8">
+        {/* PAGE HEADER */}
+        <h1 className="text-3xl font-bold text-emerald-700 mb-2">
+          Ketersediaan Kamar
+        </h1>
+        <p className="text-slate-600 text-sm mb-6">
+          Informasi status kamar rawat inap Ibu dan Anak
+        </p>
+
+        {/* STATUS SUMMARY */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div className="rounded-lg bg-emerald-50 border-l-4 border-emerald-600 p-4">
+            <p className="text-emerald-700 text-sm font-semibold">Tersedia</p>
+            <p className="text-emerald-700 text-3xl font-bold mt-1">
+              {summary.tersedia}
+            </p>
+          </div>
+          <div className="rounded-lg bg-rose-50 border-l-4 border-rose-600 p-4">
+            <p className="text-rose-700 text-sm font-semibold">Terisi</p>
+            <p className="text-rose-700 text-3xl font-bold mt-1">
+              {summary.terisi}
+            </p>
+          </div>
+          <div className="rounded-lg bg-amber-50 border-l-4 border-amber-600 p-4">
+            <p className="text-amber-700 text-sm font-semibold">Dibersihkan</p>
+            <p className="text-amber-700 text-3xl font-bold mt-1">
+              {summary.dibersihkan}
+            </p>
+          </div>
         </div>
 
-        {/* Kartu utama */}
-        <div className="flex-1 rounded-[32px] bg-white p-4 shadow-xl">
-          {/* Filter */}
-          <div className="flex flex-col gap-3">
-            <div className="flex justify-center">
-              <RoomFilterTabs value={filter} onChange={setFilter} />
-            </div>
-
-            <div className="flex flex-wrap items-center justify-center gap-2 text-[11px]">
-              <span className="text-slate-600">Status:</span>
-              {[
-                { label: "Semua", value: "all" as const },
-                { label: "Tersedia", value: "tersedia" as const },
-                { label: "Terisi", value: "terisi" as const },
-                { label: "Dibersihkan", value: "dibersihkan" as const },
-              ].map((s) => (
-                <button
-                  key={s.label}
-                  type="button"
-                  onClick={() => setStatusFilter(s.value)}
-                  className={`rounded-full px-3 py-1 font-medium ${
-                    statusFilter === s.value
-                      ? "bg-[#F6D54A] text-slate-900"
-                      : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                  }`}
-                >
-                  {s.label}
-                </button>
-              ))}
-            </div>
+        {/* FILTER SECTION */}
+        <div className="mb-8 bg-white border border-slate-200 rounded-lg p-5">
+          <div className="flex items-center gap-2 font-bold text-slate-900 mb-4">
+            <span>🧹</span>
+            Filter Kamar
           </div>
 
-          {/* Daftar kamar */}
-          <div className="mt-4 space-y-3">
-            {filteredRooms.length === 0 && (
-              <div className="rounded-2xl bg-slate-50 p-4 text-center text-sm text-slate-600">
-                Tidak ada kamar yang sesuai dengan filter.
+          <div className="space-y-4">
+            {/* STATUS FILTER */}
+            <div>
+              <p className="font-semibold text-slate-900 text-sm mb-2">Status</p>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { label: "Semua", value: "all" as StatusFilter },
+                  { label: "Tersedia", value: "tersedia" as StatusFilter },
+                  { label: "Terisi", value: "terisi" as StatusFilter },
+                  { label: "Dibersihkan", value: "dibersihkan" as StatusFilter },
+                ].map((s) => (
+                  <button
+                    key={s.label}
+                    onClick={() => setStatusFilter(s.value)}
+                    className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all ${
+                      statusFilter === s.value
+                        ? "bg-emerald-600 text-white"
+                        : "bg-white border border-slate-300 text-slate-700 hover:border-slate-400"
+                    }`}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* KATEGORI FILTER */}
+            <div>
+              <p className="font-semibold text-slate-900 text-sm mb-2">Kategori</p>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { label: "Semua", value: "all" as CategoryFilter },
+                  { label: "Ibu", value: "ibu" as CategoryFilter },
+                  { label: "Anak", value: "anak" as CategoryFilter },
+                ].map((c) => (
+                  <button
+                    key={c.label}
+                    onClick={() => setCategoryFilter(c.value)}
+                    className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all ${
+                      categoryFilter === c.value
+                        ? "bg-emerald-600 text-white"
+                        : "bg-white border border-slate-300 text-slate-700 hover:border-slate-400"
+                    }`}
+                  >
+                    {c.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ROOMS LIST */}
+        <div className="space-y-8">
+          {/* KAMAR IBU */}
+          <section>
+            <h2 className="text-2xl font-bold text-emerald-700 mb-4">
+              Kamar Ibu
+            </h2>
+
+            {Object.keys(groupedByCategory.ibu).length === 0 ? (
+              <p className="text-slate-600 text-center py-6">
+                Tidak ada kamar yang sesuai filter
+              </p>
+            ) : (
+              <div className="space-y-6">
+                {Object.entries(groupedByCategory.ibu).map(([kelas, list]) => (
+                  <div key={kelas}>
+                    <h3 className="text-sm font-semibold text-slate-800 mb-3">
+                      {kelas}
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {list.map((room) => (
+                        <RoomCard key={room.id} room={room} />
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
+          </section>
 
-            {filteredRooms.map((room) => (
-              <RoomCard key={room.id} room={room} />
-            ))}
-          </div>
+          {/* KAMAR ANAK */}
+          <section>
+            <h2 className="text-2xl font-bold text-emerald-700 mb-4">
+              Kamar Anak
+            </h2>
+
+            {Object.keys(groupedByCategory.anak).length === 0 ? (
+              <p className="text-slate-600 text-center py-6">
+                Tidak ada kamar yang sesuai filter
+              </p>
+            ) : (
+              <div className="space-y-6">
+                {Object.entries(groupedByCategory.anak).map(([kelas, list]) => (
+                  <div key={kelas}>
+                    <h3 className="text-sm font-semibold text-slate-800 mb-3">
+                      {kelas}
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {list.map((room) => (
+                        <RoomCard key={room.id} room={room} />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
         </div>
-
-        <p className="mt-3 text-center text-[11px] text-slate-500">
-          Untuk kondisi terbaru, silakan konfirmasi ke petugas pendaftaran atau
-          humas RSKIA Sadewa.
-        </p>
       </div>
     </main>
   );
